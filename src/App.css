@@ -1,0 +1,221 @@
+/* App.css - Styles pour la page de test POC Étagio */
+
+.poc-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: left;
+  font-family: var(--sans);
+}
+
+.poc-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.poc-title {
+  font-size: 3rem;
+  margin: 10px 0;
+  background: linear-gradient(135deg, #aa3bff, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+
+.poc-subtitle {
+  font-size: 1.1rem;
+  color: var(--text);
+  margin-top: 0;
+}
+
+.poc-section {
+  background: var(--social-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+
+.poc-section h3 {
+  margin-top: 0;
+  color: var(--text-h);
+  font-size: 1.3rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 8px;
+}
+
+/* Instructions */
+.instructions-list {
+  padding-left: 20px;
+  line-height: 1.6;
+}
+
+.instructions-list li {
+  margin-bottom: 12px;
+}
+
+.code-box {
+  background: var(--code-bg);
+  color: var(--text-h);
+  padding: 12px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  overflow-x: auto;
+  white-space: pre;
+  border: 1px solid var(--border);
+  margin: 8px 0;
+}
+
+/* Formulaire */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--text-h);
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.form-input {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-family: var(--sans);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+/* Boutons */
+.button-group {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #952ee0;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--code-bg);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--border);
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Terminal Console Log */
+.console-box {
+  background: #0d0e12;
+  color: #a9b1d6;
+  border: 1px solid #1a1b26;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.console-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #24283b;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  color: #565f89;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.console-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.console-clear-btn {
+  background: transparent;
+  border: none;
+  color: #565f89;
+  cursor: pointer;
+}
+
+.console-clear-btn:hover {
+  color: #a9b1d6;
+}
+
+.log-entry {
+  margin-bottom: 6px;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.log-time {
+  color: #565f89;
+  margin-right: 8px;
+}
+
+.log-info {
+  color: #7aa2f7;
+}
+
+.log-success {
+  color: #9ece6a;
+}
+
+.log-error {
+  color: #f7768e;
+}
+
+.log-warn {
+  color: #e0af68;
+}
