@@ -42,11 +42,12 @@ const { articles, addArticle, updateArticle, deleteArticle, settings, correctSto
 
   // Recherche d'articles pour l'ajout à la commande (dérivé)
   const orderSearchResults = orderSearchQuery.trim()
-    ? articles.filter(a =>
-        a.name.toLowerCase().includes(orderSearchQuery.toLowerCase()) ||
-        (a.shelf_location && a.shelf_location.toLowerCase().includes(orderSearchQuery.toLowerCase())) ||
-        (a.barcode && a.barcode.includes(orderSearchQuery))
-      ).slice(0, 5)
+    ? articles.filter(a => {
+        const query = orderSearchQuery.toLowerCase().trim();
+        return a.name.toLowerCase().includes(query) ||
+               (a.shelf_location && a.shelf_location.toLowerCase().includes(query)) ||
+               (a.barcode && String(a.barcode).toLowerCase().trim().includes(query));
+      }).slice(0, 5)
     : [];
 
   // Masquer la barre de navigation basse lorsque l'un des modals est ouvert pour libérer l'espace et éviter les chevauchements
@@ -87,9 +88,10 @@ const { articles, addArticle, updateArticle, deleteArticle, settings, correctSto
   // Filtrer les articles affichés
   const filteredArticles = articles
     .filter(a => {
-      const matchSearch = a.name.toLowerCase().includes(search.toLowerCase()) ||
-                          (a.barcode && a.barcode.includes(search)) ||
-                          a.shelf_location.toLowerCase().includes(search.toLowerCase());
+      const query = search.toLowerCase().trim();
+      const matchSearch = a.name.toLowerCase().includes(query) ||
+                          (a.barcode && String(a.barcode).toLowerCase().trim().includes(query)) ||
+                          a.shelf_location.toLowerCase().includes(query);
       const matchCat = filterCategory ? a.category === filterCategory : true;
       const matchShelf = filterShelf ? a.shelf_location === filterShelf : true;
       return matchSearch && matchCat && matchShelf;
@@ -421,7 +423,8 @@ const { articles, addArticle, updateArticle, deleteArticle, settings, correctSto
         { facingMode: "environment" },
         { fps: 10, qrbox: { width: 220, height: 220 } },
         (decodedText) => {
-          const found = articles.find(a => a.barcode === decodedText);
+          const cleanedText = String(decodedText).trim().toLowerCase();
+          const found = articles.find(a => a.barcode && String(a.barcode).trim().toLowerCase() === cleanedText);
           if (found) {
             addArticleToOrder(found);
           } else {

@@ -92,7 +92,7 @@ export function AppProvider({ children }) {
       sale_price: Number(articleData.sale_price) || 0,
       alert_threshold: Number(articleData.alert_threshold) || 0,
       variants: articleData.variants || [],
-      barcode: articleData.barcode || '',
+      barcode: articleData.barcode ? String(articleData.barcode).trim() : '',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       synced: 0
@@ -131,6 +131,7 @@ export function AppProvider({ children }) {
     const updatedArticle = {
       ...original,
       ...changes,
+      barcode: changes.barcode !== undefined ? (changes.barcode ? String(changes.barcode).trim() : '') : (original.barcode ? String(original.barcode).trim() : ''),
       updated_at: new Date().toISOString(),
       synced: 0
     };

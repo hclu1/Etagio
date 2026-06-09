@@ -142,6 +142,13 @@ export const syncManager = {
       for (const remoteArticle of remoteData.articles) {
         if (!remoteArticle.id) continue;
 
+        // S'assurer que le code-barres est toujours une chaîne de caractères propre (non numérique, sans espaces)
+        if (remoteArticle.barcode !== undefined && remoteArticle.barcode !== null) {
+          remoteArticle.barcode = String(remoteArticle.barcode).trim();
+        } else {
+          remoteArticle.barcode = '';
+        }
+
         const localArticle = await db.articles.get(remoteArticle.id);
 
         if (!localArticle) {

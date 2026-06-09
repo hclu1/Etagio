@@ -37,13 +37,13 @@ export default function POS() {
       setSearchResults([]);
       return;
     }
-    const query = searchQuery.toLowerCase();
+    const query = searchQuery.toLowerCase().trim();
     const filtered = articles.filter(
       a =>
         a.name.toLowerCase().includes(query) ||
         a.category.toLowerCase().includes(query) ||
         a.shelf_location.toLowerCase().includes(query) ||
-        (a.barcode && a.barcode.includes(query))
+        (a.barcode && String(a.barcode).toLowerCase().trim().includes(query))
     );
     setSearchResults(filtered);
   }, [searchQuery, articles]);
@@ -79,8 +79,36 @@ export default function POS() {
     setSearchQuery('');
   };
 
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const query = searchQuery.trim().toLowerCase();
+      if (!query) return;
+
+      // Chercher d'abord une correspondance exacte du code-barres
+      const exactBarcodeMatch = articles.find(
+        a => a.barcode && String(a.barcode).trim().toLowerCase() === query
+      );
+
+      if (exactBarcodeMatch) {
+        addToCart(exactBarcodeMatch);
+        setSuccessMessage(`Scanné : ${exactBarcodeMatch.name}`);
+        setTimeout(() => setSuccessMessage(''), 3000);
+        setSearchQuery('');
+        return;
+      }
+
+      // Sinon, s'il y a des résultats de recherche, ajouter le premier
+      if (searchResults.length > 0) {
+        addToCart(searchResults[0]);
+        setSearchQuery('');
+      }
+    }
+  };
+
   const handleBarcodeScanned = (barcode) => {
-    const found = articles.find(a => a.barcode === barcode);
+    const cleanedBarcode = String(barcode).trim().toLowerCase();
+    const found = articles.find(a => a.barcode && String(a.barcode).trim().toLowerCase() === cleanedBarcode);
     if (found) {
       addToCart(found);
       setSuccessMessage(`Scanné : ${found.name}`);
@@ -509,6 +537,7 @@ export default function POS() {
               placeholder="Rechercher par nom, emplacement, code..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
               style={{ paddingLeft: '38px' }}
             />
             <Icons.Search style={{ position: 'absolute', left: '12px', top: '13px', width: '18px', height: '18px', color: 'var(--text-muted)' }} />
