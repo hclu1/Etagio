@@ -9,7 +9,7 @@ export const apiService = {
     const urlSetting = await db.settings.get('apps_script_url');
     const keySetting = await db.settings.get('api_key');
     return {
-      url: urlSetting ? urlSetting.value : '',
+      url: urlSetting && urlSetting.value ? urlSetting.value : 'https://script.google.com/macros/s/AKfycbzgKAkQwK3GltWzN-WtKoyJnxS5yNgxbTotskQ4pDVtssKuMfXhvX8OL0Uxkil7KmLe/exec',
       apiKey: keySetting ? keySetting.value : 'ETAGIO_SECURE_TOKEN_2026'
     };
   },

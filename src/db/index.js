@@ -17,7 +17,7 @@ db.version(1).stores({
 export async function initDefaultSettings() {
   const defaultSettings = [
     { key: 'whatsapp_boss', value: '' },
-    { key: 'apps_script_url', value: localStorage.getItem('etagio_test_url') || '' },
+    { key: 'apps_script_url', value: localStorage.getItem('etagio_test_url') || 'https://script.google.com/macros/s/AKfycbzgKAkQwK3GltWzN-WtKoyJnxS5yNgxbTotskQ4pDVtssKuMfXhvX8OL0Uxkil7KmLe/exec' },
     { key: 'api_key', value: localStorage.getItem('etagio_test_apikey') || 'ETAGIO_SECURE_TOKEN_2026' },
     { key: 'last_sync_time', value: '' }
   ];
@@ -26,6 +26,8 @@ export async function initDefaultSettings() {
     const exists = await db.settings.get(setting.key);
     if (!exists) {
       await db.settings.add(setting);
+    } else if (setting.key === 'apps_script_url' && !exists.value) {
+      await db.settings.put({ key: 'apps_script_url', value: setting.value });
     }
   }
 }
