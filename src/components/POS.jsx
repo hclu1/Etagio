@@ -29,15 +29,25 @@ export default function POS() {
   }, [settings.fond_de_caisse]);
 
   const qrCodeInstance = useRef(null);
+  const searchInputRef = useRef(null);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
 
-  // Recherche d'articles
+  // Debouncer la saisie de recherche pour éviter les ralentissements UI (essentiel pour les douchettes USB)
   useEffect(() => {
-    if (!searchQuery.trim()) {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 150);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  // Recherche d'articles (basée sur le query debouncé)
+  useEffect(() => {
+    if (!debouncedSearchQuery.trim()) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSearchResults([]);
       return;
     }
-    const query = searchQuery.toLowerCase().trim();
+    const query = debouncedSearchQuery.toLowerCase().trim();
     const filtered = articles.filter(
       a =>
         a.name.toLowerCase().includes(query) ||
@@ -46,7 +56,7 @@ export default function POS() {
         (a.barcode && String(a.barcode).toLowerCase().trim().includes(query))
     );
     setSearchResults(filtered);
-  }, [searchQuery, articles]);
+  }, [debouncedSearchQuery, articles]);
 
   // Ajouter un article au panier
   const addToCart = (article) => {
@@ -77,6 +87,11 @@ export default function POS() {
       }
     });
     setSearchQuery('');
+    setTimeout(() => {
+      if (searchInputRef.current) {
+        searchInputRef.current.focus();
+      }
+    }, 50);
   };
 
   const handleSearchKeyDown = (e) => {
@@ -94,13 +109,20 @@ export default function POS() {
         addToCart(exactBarcodeMatch);
         setSuccessMessage(`Scanné : ${exactBarcodeMatch.name}`);
         setTimeout(() => setSuccessMessage(''), 3000);
-        setSearchQuery('');
         return;
       }
 
-      // Sinon, s'il y a des résultats de recherche, ajouter le premier
-      if (searchResults.length > 0) {
-        addToCart(searchResults[0]);
+      // Sinon, filtrer immédiatement pour trouver le premier résultat
+      const instantResults = articles.filter(
+        a =>
+          a.name.toLowerCase().includes(query) ||
+          a.category.toLowerCase().includes(query) ||
+          a.shelf_location.toLowerCase().includes(query) ||
+          (a.barcode && String(a.barcode).toLowerCase().trim().includes(query))
+      );
+      if (instantResults.length > 0) {
+        addToCart(instantResults[0]);
+      } else {
         setSearchQuery('');
       }
     }
@@ -176,6 +198,35 @@ export default function POS() {
     return () => stopScanning();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showScanner]);
+
+  // Autofocus et capture intelligente du scanner physique USB (redirection de frappe globale)
+  useEffect(() => {
+    // Focus initial au montage de l'écran POS
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+
+    const handleGlobalKeyDown = (e) => {
+      // Si l'utilisateur saisit déjà dans un champ de formulaire (input, textarea, etc.), on n'intervient pas
+      const activeEl = document.activeElement;
+      if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+        return;
+      }
+
+      // Si raccourci système ou touche spéciale, on n'intervient pas
+      if (e.altKey || e.ctrlKey || e.metaKey || e.key === 'Escape' || e.key === 'Tab') {
+        return;
+      }
+
+      // Si c'est une touche simple imprimable (comme un chiffre tapé par une douchette), on focus la recherche
+      if (e.key && e.key.length === 1 && searchInputRef.current) {
+        searchInputRef.current.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
 
   // Mettre à jour la quantité dans le panier
   const updateCartQty = (articleId, qty) => {
@@ -532,6 +583,7 @@ export default function POS() {
         <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
           <div style={{ position: 'relative', flex: 1 }}>
             <input
+              ref={searchInputRef}
               type="text"
               className="input-modern"
               placeholder="Rechercher par nom, emplacement, code..."
