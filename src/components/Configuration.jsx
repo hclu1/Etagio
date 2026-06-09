@@ -106,9 +106,18 @@ export default function Configuration() {
               {navigator.onLine ? 'Connecté (En ligne)' : 'Hors ligne'}
             </strong>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>Statut de l'API :</span>
-            <strong>{syncState.status}</strong>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Statut de l'API :</span>
+              <strong style={{ color: syncState.status === 'ERROR' ? 'var(--stock-danger)' : syncState.status === 'IDLE' ? 'var(--stock-ok)' : 'inherit' }}>
+                {syncState.status}
+              </strong>
+            </div>
+            {syncState.details && (
+              <div style={{ fontSize: '0.75rem', color: syncState.status === 'ERROR' ? 'var(--stock-danger)' : 'var(--text-muted)', textAlign: 'right', fontWeight: 'bold' }}>
+                {syncState.details}
+              </div>
+            )}
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span>Tâches en attente d'envoi :</span>
