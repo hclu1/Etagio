@@ -269,16 +269,13 @@ export default function POS() {
     
     // Encoder le message pour l'URL
     const encodedText = encodeURIComponent(message);
-    const cleanedPhone = bossNumber.replace(/\D/g, ''); // Enlever les caractères non numériques
+    const cleanedPhone = bossNumber.replace(/\D/g, '');
+    if (!cleanedPhone) {
+      alert('Numéro invalide : ' + bossNumber);
+      return;
+    }
     const whatsappUrl = `https://wa.me/${cleanedPhone}?text=${encodedText}`;
-
-    const link = document.createElement('a');
-    link.href = whatsappUrl;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    window.location.href = whatsappUrl;
   };
 
   // Helper functions for date filtering (sales stats)

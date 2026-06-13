@@ -379,19 +379,18 @@ const { articles, addArticle, updateArticle, deleteArticle, settings, correctSto
 
     const encodedText = encodeURIComponent(message);
     const cleanPhone = bossPhone.replace(/\D/g, '');
-    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedText}`;
-
-    const link = document.createElement('a');
-    link.href = whatsappUrl;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    if (window.confirm("La commande a été préparée. Voulez-vous vider la liste de commande ?")) {
-      setOrderItems([]);
+    if (!cleanPhone) {
+      alert('Numéro invalide : ' + bossPhone);
+      return;
     }
+    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedText}`;
+    window.location.href = whatsappUrl;
+
+    setTimeout(() => {
+      if (window.confirm("La commande a été préparée. Voulez-vous vider la liste de commande ?")) {
+        setOrderItems([]);
+      }
+    }, 1000);
   };
 
   const handleSearchKeyDown = (e) => {
@@ -467,14 +466,13 @@ const { articles, addArticle, updateArticle, deleteArticle, settings, correctSto
       return;
     }
     const message = `Bonjour, le produit ${article.name} est en rupture ou presque en rupture. Emplacement : ${article.shelf_location}. Stock actuel : ${article.quantity}. Seuil : ${article.alert_threshold}. Merci de prévoir un réapprovisionnement pour la boutique.`;
-    const url = `https://wa.me/${bossPhone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const cleanPhone = bossPhone.replace(/\D/g, '');
+    if (!cleanPhone) {
+      alert('Numéro invalide : ' + bossPhone);
+      return;
+    }
+    const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+    window.location.href = url;
   };
 
 
