@@ -30,7 +30,7 @@ const { articles, addArticle, updateArticle, deleteArticle, settings, correctSto
   // États modal de réapprovisionnement
   const [showRestockModal, setShowRestockModal] = useState(false);
   const [restockArticle, setRestockArticle] = useState(null);
-  const [restockQty, setRestockQty] = useState(1);
+  const [restockQty, setRestockQty] = useState(0);
 
   // États pour la préparation de commande WhatsApp
   const [showOrderPanel, setShowOrderPanel] = useState(false);
@@ -64,12 +64,12 @@ const { articles, addArticle, updateArticle, deleteArticle, settings, correctSto
 
   const openRestock = (article) => {
     setRestockArticle(article);
-    setRestockQty(1);
+    setRestockQty(0);
     setShowRestockModal(true);
   };
 
   const handleRestock = async () => {
-    if (!restockArticle || restockQty < 1) return;
+    if (!restockArticle || restockQty < 0) return;
     try {
       const newQty = restockArticle.quantity + Number(restockQty);
       await correctStock(restockArticle.id, newQty, `Réapprovisionnement (+${restockQty})`);
@@ -381,8 +381,14 @@ const { articles, addArticle, updateArticle, deleteArticle, settings, correctSto
     const cleanPhone = bossPhone.replace(/\D/g, '');
     const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedText}`;
 
-    window.open(whatsappUrl, '_blank');
-    
+    const link = document.createElement('a');
+    link.href = whatsappUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
     if (window.confirm("La commande a été préparée. Voulez-vous vider la liste de commande ?")) {
       setOrderItems([]);
     }
@@ -462,7 +468,13 @@ const { articles, addArticle, updateArticle, deleteArticle, settings, correctSto
     }
     const message = `Bonjour, le produit ${article.name} est en rupture ou presque en rupture. Emplacement : ${article.shelf_location}. Stock actuel : ${article.quantity}. Seuil : ${article.alert_threshold}. Merci de prévoir un réapprovisionnement pour la boutique.`;
     const url = `https://wa.me/${bossPhone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
 
@@ -1129,10 +1141,10 @@ const { articles, addArticle, updateArticle, deleteArticle, settings, correctSto
               <label>QUANTITÉ REÇUE</label>
               <input
                 type="number"
-                min="1"
+                min="0"
                 className="input-modern"
                 value={restockQty}
-                onChange={e => setRestockQty(Math.max(1, Number(e.target.value)))}
+                onChange={e => setRestockQty(Math.max(0, Number(e.target.value)))}
                 autoFocus
               />
             </div>

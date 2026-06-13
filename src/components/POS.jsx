@@ -271,8 +271,14 @@ export default function POS() {
     const encodedText = encodeURIComponent(message);
     const cleanedPhone = bossNumber.replace(/\D/g, ''); // Enlever les caractères non numériques
     const whatsappUrl = `https://wa.me/${cleanedPhone}?text=${encodedText}`;
-    
-    window.open(whatsappUrl, '_blank');
+
+    const link = document.createElement('a');
+    link.href = whatsappUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // Helper functions for date filtering (sales stats)

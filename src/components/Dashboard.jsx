@@ -86,11 +86,11 @@ export default function Dashboard() {
         {/* Ventes du Jour */}
         <div className="metric-card card-sales">
           <div className="metric-header">
-            <span>Marge du jour</span>
+            <span>Vente du jour</span>
             <div className="metric-dot dot-purple"></div>
           </div>
-          <div className="metric-value">{formatPrice(todayMargin)}</div>
-          <div className="metric-desc">Sur {todaySales.length} vente(s) ({formatPrice(todayRevenue)})</div>
+          <div className="metric-value">{formatPrice(todayRevenue)}</div>
+          <div className="metric-desc">Marge : {formatPrice(todayMargin)} · {todaySales.length} vente(s)</div>
         </div>
 
         {/* Valeur Inventaire */}
